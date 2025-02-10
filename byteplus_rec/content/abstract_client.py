@@ -78,6 +78,15 @@ class AbstractClient(object):
         raise NotImplementedError
 
     @abstractmethod
+    def finish_write(self, finish_request: FinishWriteDataRequest, *opts: Option) -> WriteResponse:
+        """
+        Recording that some data has been written, the topic of these data is set by users.
+        Mark at most 100 dates at a time
+        No need to finish real-time data, the system will automatically finish when entering the next day
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def predict(self, predict_request: PredictRequest, *opts: Option) -> PredictResponse:
         """
         Gets the list of contents (ranked).

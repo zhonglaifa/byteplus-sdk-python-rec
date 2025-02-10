@@ -7,7 +7,7 @@ from byteplus_rec_core.http_client import HTTPClient
 from byteplus_rec_core.option import Option
 from byteplus_rec.content.constant import _MAX_WRITE_COUNT, _MAX_FINISH_COUNT, TOPIC_USER, TOPIC_CONTENT, \
     TOPIC_USER_EVENT, USER_URI, CONTENT_URI, USER_EVENT_URI, OTHERS_URI, FINISH_USER_URI, FINISH_CONTENT_URI, \
-    FINISH_USER_EVENT_URI, FINISH_OTHERS_URI, PREDICT_URI, ACK_SERVER_IMPRESSIONS_URI
+    FINISH_USER_EVENT_URI, FINISH_OTHERS_URI, FINISH_URI, PREDICT_URI, ACK_SERVER_IMPRESSIONS_URI
 from byteplus_rec_core import utils
 from byteplus_rec.content.abstract_client import AbstractClient
 
@@ -49,6 +49,9 @@ class Client(AbstractClient):
 
     def finish_write_others(self, finish_request: FinishWriteDataRequest, *opts: Option) -> WriteResponse:
         return self._do_finish_data(finish_request, FINISH_OTHERS_URI, *opts)
+
+    def finish_write(self, finish_request: FinishWriteDataRequest, *opts: Option) -> WriteResponse:
+        return self._do_finish_data(finish_request, FINISH_URI, *opts)
 
     def _do_write_data(self, write_request: WriteDataRequest, path: str, *opts: Option) -> WriteResponse:
         if len(self._project_id) > 0 and len(write_request.project_id) == 0:
@@ -107,8 +110,6 @@ class Client(AbstractClient):
     def _check_predict_request(request: PredictRequest):
         if utils.is_empty_str(request.project_id):
             raise BizException("project id in predict request is empty")
-        if utils.is_empty_str(request.model_id):
-            raise BizException("model id in predict request is empty")
 
     def ack_server_impressions(self, ack_request: AckServerImpressionsRequest,
                                *opts: Option) -> AckServerImpressionsResponse:
@@ -126,8 +127,6 @@ class Client(AbstractClient):
     def _check_ack_request(request: AckServerImpressionsRequest):
         if utils.is_empty_str(request.project_id):
             raise BizException("project id in ack request is empty")
-        if utils.is_empty_str(request.model_id):
-            raise BizException("model id in ack request is empty")
 
     def release(self):
         self._http_client.shutdown()

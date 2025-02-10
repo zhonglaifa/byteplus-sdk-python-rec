@@ -29,9 +29,8 @@ log = logging.getLogger(__name__)
 # A unique identity assigned by Bytedance.
 PROJECT_ID = "***********"
 
-# Unique id for this model.The saas model id that can be used to get rec results from predict api,
-# which is need to fill in URL.
-MODEL_ID = "***********"
+# The unique identifier for the cooperation scenario.
+SCENE_NAME = "***********"
 
 # Required Param:
 #       tenant_id
@@ -107,26 +106,17 @@ def main():
     # Write real-time user data
     write_users_example()
 
-    # Finish write real-time user data
-    # finish_write_users_example()
-
     # Write real-time product data
     write_products_example()
-
-    # Finish write real-time product data
-    # finish_write_products_example()
 
     # Write real-time user event data
     write_user_events_example()
 
-    # Finish write real-time user event data
-    # finish_write_user_events_example()
-
     # Write self defined topic data
     # write_others_example()
 
-    # Finish write self defined topic data
-    # finish_write_others_example()
+    # Finish write topic data
+    # finish_write_example()
 
     # Get recommendation results
     recommend_example()
@@ -169,29 +159,6 @@ def _build_write_user_request(count: int) -> WriteDataRequest:
     return request
 
 
-def finish_write_users_example():
-    # The "FinishXXX" api can mark max to 100 dates at one request
-    request = _build_finish_user_request()
-    opts = _default_opts(DEFAULT_FINISH_TIMEOUT)
-    try:
-        # response: WriteResponse = utils.do_with_retry(client.finish_write_users, request, opts, DEFAULT_RETRY_TIMES)
-        response: WriteResponse = client.finish_write_users(request, *opts)
-    except BizException as e:
-        log.error("finish user occur err, msg:%s", e)
-        return
-    if is_upload_success(response.status.code):
-        log.info("finish user success")
-        return
-    log.error("finish user find fail, msg:%s errItems:%s", response.status, response.errors)
-    return
-
-
-def _build_finish_user_request() -> WriteDataRequest:
-    request = FinishWriteDataRequest()
-    request.stage = STAGE_INCREMENTAL
-    return request
-
-
 def write_products_example():
     # The "WriteXXX" api can transfer max to 2000 items at one request
     request = _build_write_product_request(1)
@@ -224,30 +191,6 @@ def _build_write_product_request(count: int) -> WriteDataRequest:
     return request
 
 
-def finish_write_products_example():
-    # The "FinishXXX" api can mark max to 100 dates at one request
-    request = _build_finish_product_request()
-    opts = _default_opts(DEFAULT_FINISH_TIMEOUT)
-    try:
-        # response: WriteResponse = utils.do_with_retry(client.finish_write_products, request, opts,
-        # DEFAULT_RETRY_TIMES)
-        response: WriteResponse = client.finish_write_products(request, *opts)
-    except BizException as e:
-        log.error("finish product occur err, msg:%s", e)
-        return
-    if is_upload_success(response.status.code):
-        log.info("finish product success")
-        return
-    log.error("finish product find fail, msg:%s errItems:%s", response.status, response.errors)
-    return
-
-
-def _build_finish_product_request() -> WriteDataRequest:
-    request = FinishWriteDataRequest()
-    request.stage = STAGE_INCREMENTAL
-    return request
-
-
 def write_user_events_example():
     # The "WriteXXX" api can transfer max to 2000 items at one request
     request = _build_write_user_event_request(15)
@@ -277,36 +220,6 @@ def _build_write_user_event_request(count: int) -> WriteDataRequest:
 
     # Optional
     # request.extra["extra_info"] = "value"
-    return request
-
-
-def finish_write_user_events_example():
-    # The "FinishXXX" api can mark max to 100 dates at one request
-    request = _build_finish_user_event_request()
-    opts = _default_opts(DEFAULT_FINISH_TIMEOUT)
-    try:
-        # response: WriteResponse = utils.do_with_retry(client.finish_write_user_events(), request, opts,
-        # DEFAULT_RETRY_TIMES)
-        response: WriteResponse = client.finish_write_user_events(request, *opts)
-    except BizException as e:
-        log.error("finish user_event occur err, msg:%s", e)
-        return
-    if is_upload_success(response.status.code):
-        log.info("finish user_event success")
-        return
-    log.error("finish user_event find fail, msg:%s errItems:%s", response.status, response.errors)
-    return
-
-
-def _build_finish_user_event_request() -> WriteDataRequest:
-    # dates should be passed when finishing others
-    date: Date = Date()
-    date.year = 2022
-    date.month = 3
-    date.day = 28
-    request: FinishWriteDataRequest = FinishWriteDataRequest()
-    request.stage = STAGE_INCREMENTAL
-    request.data_dates.extend([date])
     return request
 
 
@@ -345,12 +258,12 @@ def _build_write_others_request(topic: str) -> WriteDataRequest:
     return request
 
 
-def finish_write_others_example():
+def finish_write_example():
     # The "FinishXXX" api can mark max to 100 dates at one request
     # The `topic` is datatype, which specify the type of data users are going to write.
     # It is temporarily set to "video", the specific value depends on your need.
     topic = "video"
-    request = _build_finish_other_request(topic)
+    request = _build_finish_request(topic)
     opts = _default_opts(DEFAULT_FINISH_TIMEOUT)
     try:
         # response: WriteResponse = utils.do_with_retry(client.finish_write_others, request, opts,
@@ -366,7 +279,7 @@ def finish_write_others_example():
     return
 
 
-def _build_finish_other_request(topic: str) -> WriteDataRequest:
+def _build_finish_request(topic: str) -> WriteDataRequest:
     # dates should be passed when finishing others
     date: Date = Date()
     date.year = 2022
@@ -404,11 +317,12 @@ def recommend_example():
 
 def _build_predict_request() -> PredictRequest:
     request = PredictRequest()
-    request.model_id = MODEL_ID
+    request.model_id = SCENE_NAME
     request.user_id = "1457789"
     request.size = 20
 
     scene = request.scene
+    scene.scene_name = SCENE_NAME
     scene.offset = 10
 
     ctx = request.context
