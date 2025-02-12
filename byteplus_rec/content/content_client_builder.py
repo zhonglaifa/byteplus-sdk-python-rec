@@ -15,7 +15,6 @@ _BYTEPLUS_AUTH_SERVICE = "byteplus_recommend"
 class ClientBuilder(object):
     def __init__(self):
         self._tenant_id: Optional[str] = ""
-        self._tenant_id: Optional[str] = ""
         self._project_id: Optional[str] = ""
         self._air_auth_token: Optional[str] = ""
         self._auth_ak: Optional[str] = ""

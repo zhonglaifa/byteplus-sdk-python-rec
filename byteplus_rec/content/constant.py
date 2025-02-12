@@ -46,6 +46,8 @@ OTHERS_URI = "/ContentSaaS/WriteOthers"
 
 FINISH_OTHERS_URI = "/ContentSaaS/FinishWriteOthers"
 
+FINISH_URI = "/ContentSaaS/FinishWrite"
+
 PREDICT_URI = "/ContentSaaS/Predict"
 
 ACK_SERVER_IMPRESSIONS_URI = "/ContentSaaS/AckServerImpressions"
