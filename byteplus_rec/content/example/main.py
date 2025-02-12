@@ -31,6 +31,7 @@ log = logging.getLogger(__name__)
 PROJECT_ID = "***********"
 
 # The unique identifier for the cooperation scenario.
+# Please keep it consistent with the 'Scene name' configured in 'Slot management'.
 SCENE_NAME = "***********"
 
 # Required Param:
@@ -261,9 +262,9 @@ def _build_write_others_request(topic: str) -> WriteDataRequest:
 
 def finish_write_example():
     # The "FinishXXX" api can mark max to 100 dates at one request
-    # The `topic` is datatype, which specify the type of data users are going to write.
-    # It is temporarily set to "video", the specific value depends on your need.
-    topic = "video"
+    # When using "WriteUsers", "WriteContents", and "WriteUserEvents" API, the topics are "user", "content", and "user_event" respectively.
+    # When using the WriteOthers API, the topic here is the same as the topic in WriteOthers.
+    topic = "user"
     request = _build_finish_request(topic)
     opts = _default_opts(DEFAULT_FINISH_TIMEOUT)
     try:
